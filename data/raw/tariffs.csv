@@ -1,0 +1,5 @@
+tariff_id,tariff_name,price,duration_days,is_active,created_at
+1,Starter,990.0,30,True,2022-01-01
+2,Business,2990.0,30,True,2022-01-01
+3,Professional,7990.0,30,True,2022-06-01
+4,Enterprise,19990.0,30,True,2023-01-01
