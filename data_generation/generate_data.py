@@ -32,10 +32,6 @@ def random_dates_between(
     start_dates: pd.Series | pd.DatetimeIndex,
     end_date: pd.Timestamp,
 ) -> pd.Series:
-    """
-    Генерирует случайную дату между индивидуальной датой начала
-    и общей датой окончания.
-    """
     starts = pd.to_datetime(start_dates)
     available_seconds = (
         end_date - starts
@@ -49,10 +45,8 @@ def random_dates_between(
 
 
 def save_csv(dataframe: pd.DataFrame, filename: str) -> None:
-    """Сохраняет DataFrame в CSV и выводит результат."""
     file_path = OUTPUT_DIR / filename
     dataframe.to_csv(file_path, index=False, encoding="utf-8")
-
     print(f"{filename:<30} {len(dataframe):>10,} rows")
 
 
@@ -166,12 +160,7 @@ def generate_tariffs() -> pd.DataFrame:
                 "Professional",
                 "Enterprise",
             ],
-            "price": [
-                990.00,
-                2_990.00,
-                7_990.00,
-                19_990.00,
-            ],
+            "price": [990.00, 2_990.00, 7_990.00, 19_990.00],
             "duration_days": [30, 30, 30, 30],
             "is_active": [True, True, True, True],
             "created_at": [
@@ -189,10 +178,6 @@ def generate_tariffs() -> pd.DataFrame:
 # ============================================================
 
 def choose_tariff(company_size: str) -> int:
-    """
-    Крупные компании с большей вероятностью выбирают
-    дорогие тарифы.
-    """
     if company_size == "small":
         return int(
             rng.choice(
@@ -217,9 +202,7 @@ def choose_tariff(company_size: str) -> int:
     )
 
 
-def generate_subscriptions(
-    accounts: pd.DataFrame,
-) -> pd.DataFrame:
+def generate_subscriptions(accounts: pd.DataFrame) -> pd.DataFrame:
     size_weights = accounts["company_size"].map(
         {
             "small": 1.0,
@@ -234,6 +217,47 @@ def generate_subscriptions(
         N_SUBSCRIPTIONS,
         size_weights,
     )
+
+    lead_day_weights = np.array(
+        [
+            0.18,
+            0.12,
+            0.09,
+            0.07,
+            0.06,
+            0.05,
+            0.04,
+            0.04,
+            0.035,
+            0.03,
+            0.03,
+            0.025,
+            0.025,
+            0.02,
+            0.02,
+            0.02,
+            0.018,
+            0.018,
+            0.016,
+            0.016,
+            0.014,
+            0.014,
+            0.012,
+            0.012,
+            0.010,
+            0.010,
+            0.008,
+            0.008,
+            0.006,
+            0.006,
+            0.004,
+        ],
+        dtype=float,
+    )
+    lead_day_probabilities = lead_day_weights / lead_day_weights.sum()
+
+    gap_values = np.array([0, 7, 14, 30, 60])
+    gap_probabilities = np.array([0.83, 0.06, 0.04, 0.04, 0.03])
 
     rows: list[dict] = []
     subscription_id = 1
@@ -252,49 +276,7 @@ def generate_subscriptions(
         )
 
         for _ in range(subscription_count):
-                    for _ in range(subscription_count):
             tariff_id = choose_tariff(account.company_size)
-
-            lead_day_weights = np.array(
-                [
-                    0.18,
-                    0.12,
-                    0.09,
-                    0.07,
-                    0.06,
-                    0.05,
-                    0.04,
-                    0.04,
-                    0.035,
-                    0.03,
-                    0.03,
-                    0.025,
-                    0.025,
-                    0.02,
-                    0.02,
-                    0.02,
-                    0.018,
-                    0.018,
-                    0.016,
-                    0.016,
-                    0.014,
-                    0.014,
-                    0.012,
-                    0.012,
-                    0.010,
-                    0.010,
-                    0.008,
-                    0.008,
-                    0.006,
-                    0.006,
-                    0.004,
-                ],
-                dtype=float,
-            )
-
-            lead_day_probabilities = (
-                lead_day_weights / lead_day_weights.sum()
-            )
 
             purchase_lead_days = int(
                 rng.choice(
@@ -304,16 +286,10 @@ def generate_subscriptions(
             )
 
             valid_from = next_valid_from
-
-            purchased_at = valid_from - pd.Timedelta(
-                days=purchase_lead_days
-            )
-
             purchased_at = max(
-                purchased_at,
+                valid_from - pd.Timedelta(days=purchase_lead_days),
                 pd.Timestamp(account.created_at),
             )
-
             paid_till = valid_from + pd.Timedelta(days=30)
 
             is_cancelled = rng.random() < 0.04
@@ -341,25 +317,10 @@ def generate_subscriptions(
 
             gap_days = int(
                 rng.choice(
-                    [0, 0, 0, 0, 0, 7, 14, 30, 60],
-                    p=[
-                        0.30,
-                        0.20,
-                        0.15,
-                        0.10,
-                        0.08,
-                        0.06,
-                        0.04,
-                        0.04,
-                        0.03,
-                    ],
+                    gap_values,
+                    p=gap_probabilities,
                 )
             )
-
-            next_valid_from = paid_till + pd.Timedelta(
-                days=gap_days
-            )
-
             next_valid_from = paid_till + pd.Timedelta(days=gap_days)
 
     subscriptions = pd.DataFrame(rows)
@@ -373,9 +334,7 @@ def generate_subscriptions(
 # PAYMENTS
 # ============================================================
 
-def generate_payments(
-    accounts: pd.DataFrame,
-) -> pd.DataFrame:
+def generate_payments(accounts: pd.DataFrame) -> pd.DataFrame:
     account_weights = accounts["company_size"].map(
         {
             "small": 1.0,
@@ -393,20 +352,19 @@ def generate_payments(
         p=account_weights,
     )
 
-    payment_accounts = (
-        pd.DataFrame({"account_id": selected_account_ids})
-        .merge(
-            accounts[
-                [
-                    "account_id",
-                    "created_at",
-                    "company_size",
-                    "business_segment",
-                ]
-            ],
-            on="account_id",
-            how="left",
-        )
+    payment_accounts = pd.DataFrame(
+        {"account_id": selected_account_ids}
+    ).merge(
+        accounts[
+            [
+                "account_id",
+                "created_at",
+                "company_size",
+                "business_segment",
+            ]
+        ],
+        on="account_id",
+        how="left",
     )
 
     payment_dates = random_dates_between(
@@ -414,16 +372,14 @@ def generate_payments(
         END_DATE,
     )
 
-    payment_systems = [
-        "stripe",
-        "paypal",
-        "cloudpayments",
-        "yookassa",
-        "tinkoff",
-    ]
-
     payment_system = rng.choice(
-        payment_systems,
+        [
+            "stripe",
+            "paypal",
+            "cloudpayments",
+            "yookassa",
+            "tinkoff",
+        ],
         size=N_PAYMENTS,
         p=[0.24, 0.12, 0.25, 0.25, 0.14],
     )
@@ -462,7 +418,6 @@ def generate_payments(
         * size_amount_multiplier
         * segment_amount_multiplier
     )
-
     amount = np.clip(amount, 100, 1_500_000)
     amount = np.round(amount, 2)
 
@@ -487,7 +442,6 @@ def generate_payments(
         amount * commission_rates,
         0,
     )
-
     commission_amount = np.round(commission_amount, 2)
 
     is_deleted = rng.choice(
@@ -518,9 +472,7 @@ def generate_payments(
 # CHECKOUT REQUESTS
 # ============================================================
 
-def generate_checkout_requests(
-    accounts: pd.DataFrame,
-) -> pd.DataFrame:
+def generate_checkout_requests(accounts: pd.DataFrame) -> pd.DataFrame:
     selected_accounts = accounts.sample(
         n=N_CHECKOUT_REQUESTS,
         replace=False,
@@ -552,10 +504,7 @@ def generate_checkout_requests(
 
     checkout_requests = pd.DataFrame(
         {
-            "request_id": np.arange(
-                1,
-                N_CHECKOUT_REQUESTS + 1,
-            ),
+            "request_id": np.arange(1, N_CHECKOUT_REQUESTS + 1),
             "account_id": selected_accounts["account_id"],
             "requested_payment_system": requested_systems,
             "created_at": created_at,
@@ -593,22 +542,18 @@ def validate_data(
     assert payments["account_id"].isin(
         accounts["account_id"]
     ).all()
-
     assert subscriptions["account_id"].isin(
         accounts["account_id"]
     ).all()
-
     assert subscriptions["tariff_id"].isin(
         tariffs["tariff_id"]
     ).all()
-
     assert checkout_requests["account_id"].isin(
         accounts["account_id"]
     ).all()
 
     assert (payments["amount"] >= 0).all()
     assert (payments["commission_amount"] >= 0).all()
-
     assert (
         subscriptions["paid_till"]
         > subscriptions["valid_from"]
