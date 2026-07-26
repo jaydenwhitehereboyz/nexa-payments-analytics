@@ -6,47 +6,74 @@
 -- ============================================================
 
 -- 1. Payment economics by risk level.
-SELECT
-    arp.risk_level,
-    COUNT(DISTINCT p.account_id) AS transacting_accounts,
-    COUNT(*) AS successful_payments,
-    ROUND(AVG(arp.risk_score), 4) AS average_risk_score,
-    ROUND(100.0 * AVG(arp.chargeback_rate), 3) AS average_chargeback_rate_pct,
-    ROUND(100.0 * AVG(arp.refund_rate), 3) AS average_refund_rate_pct,
-    ROUND(100.0 * AVG(arp.risk_surcharge_rate), 3) AS configured_risk_surcharge_pct,
-    ROUND(SUM(p.amount), 2) AS gross_payment_volume,
-    ROUND(AVG(p.amount), 2) AS average_payment_amount,
-    ROUND(SUM(p.client_fee_amount), 2) AS total_client_fees,
-    ROUND(SUM(p.payment_system_fee_amount), 2) AS total_provider_cost,
-    ROUND(SUM(p.platform_fee_amount), 2) AS platform_transaction_revenue,
-    ROUND(SUM(p.amount * p.risk_surcharge_rate), 2) AS risk_surcharge_revenue,
-    ROUND(
+WITH risk_accounts AS (
+    SELECT
+        risk_level,
+        COUNT(*) AS accounts_in_profile,
+        ROUND(AVG(risk_score), 4) AS average_risk_score,
+        ROUND(100.0 * AVG(chargeback_rate), 3) AS average_chargeback_rate_pct,
+        ROUND(100.0 * AVG(refund_rate), 3) AS average_refund_rate_pct,
+        ROUND(100.0 * AVG(risk_surcharge_rate), 3) AS configured_risk_surcharge_pct
+    FROM account_risk_profiles
+    GROUP BY risk_level
+),
+risk_payments AS (
+    SELECT
+        arp.risk_level,
+        COUNT(DISTINCT p.account_id) AS transacting_accounts,
+        COUNT(*) AS successful_payments,
+        SUM(p.amount) AS gross_payment_volume,
+        AVG(p.amount) AS average_payment_amount,
+        SUM(p.client_fee_amount) AS total_client_fees,
+        SUM(p.payment_system_fee_amount) AS total_provider_cost,
+        SUM(p.platform_fee_amount) AS platform_transaction_revenue,
+        SUM(p.amount * p.risk_surcharge_rate) AS risk_surcharge_revenue,
         SUM(
             p.platform_fee_amount
             - p.amount * p.risk_surcharge_rate
-        ),
-        2
-    ) AS base_margin_revenue,
+        ) AS base_margin_revenue
+    FROM payments p
+    JOIN account_risk_profiles arp
+        ON p.account_id = arp.account_id
+    WHERE p.status = 'succeeded'
+      AND p.is_deleted = FALSE
+    GROUP BY arp.risk_level
+)
+SELECT
+    ra.risk_level,
+    ra.accounts_in_profile,
+    rp.transacting_accounts,
+    rp.successful_payments,
+    ra.average_risk_score,
+    ra.average_chargeback_rate_pct,
+    ra.average_refund_rate_pct,
+    ra.configured_risk_surcharge_pct,
+    ROUND(rp.gross_payment_volume, 2) AS gross_payment_volume,
+    ROUND(rp.average_payment_amount, 2) AS average_payment_amount,
+    ROUND(rp.total_client_fees, 2) AS total_client_fees,
+    ROUND(rp.total_provider_cost, 2) AS total_provider_cost,
+    ROUND(rp.platform_transaction_revenue, 2) AS platform_transaction_revenue,
+    ROUND(rp.risk_surcharge_revenue, 2) AS risk_surcharge_revenue,
+    ROUND(rp.base_margin_revenue, 2) AS base_margin_revenue,
     ROUND(
-        100.0 * SUM(p.client_fee_amount) / NULLIF(SUM(p.amount), 0),
+        100.0 * rp.total_client_fees
+        / NULLIF(rp.gross_payment_volume, 0),
         3
     ) AS weighted_effective_client_fee_rate_pct,
     ROUND(
-        100.0 * SUM(p.payment_system_fee_amount)
-        / NULLIF(SUM(p.amount), 0),
+        100.0 * rp.total_provider_cost
+        / NULLIF(rp.gross_payment_volume, 0),
         3
     ) AS weighted_provider_cost_rate_pct,
     ROUND(
-        100.0 * SUM(p.platform_fee_amount) / NULLIF(SUM(p.amount), 0),
+        100.0 * rp.platform_transaction_revenue
+        / NULLIF(rp.gross_payment_volume, 0),
         3
     ) AS weighted_platform_margin_rate_pct
-FROM payments p
-JOIN account_risk_profiles arp
-    ON p.account_id = arp.account_id
-WHERE p.status = 'succeeded'
-  AND p.is_deleted = FALSE
-GROUP BY arp.risk_level
-ORDER BY CASE arp.risk_level
+FROM risk_accounts ra
+LEFT JOIN risk_payments rp
+    ON ra.risk_level = rp.risk_level
+ORDER BY CASE ra.risk_level
     WHEN 'low' THEN 1
     WHEN 'medium' THEN 2
     WHEN 'high' THEN 3
