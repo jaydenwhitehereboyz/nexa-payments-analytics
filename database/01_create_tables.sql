@@ -273,7 +273,12 @@ CREATE TABLE payments (
 
     CHECK (client_fee_rate >= provider_cost_rate),
     CHECK (client_fee_amount >= payment_system_fee_amount),
-    CHECK (platform_fee_amount = client_fee_amount - payment_system_fee_amount),
+    CHECK (
+        ABS(
+            platform_fee_amount
+            - (client_fee_amount - payment_system_fee_amount)
+        ) <= 0.01
+    ),
     CHECK (
         (status = 'succeeded' AND is_deleted = FALSE)
         OR
