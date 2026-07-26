@@ -91,13 +91,20 @@ SELECT 'checkout_requests', COUNT(*) FROM checkout_requests
 ORDER BY table_name;
 
 
--- Basic economics check: these two totals should match.
+-- Fee allocation check. A small difference is possible because every
+-- transaction component is rounded independently to kopecks.
 SELECT
     ROUND(SUM(client_fee_amount), 2) AS total_client_fees,
     ROUND(
         SUM(payment_system_fee_amount) + SUM(platform_fee_amount),
         2
-    ) AS provider_cost_plus_platform_revenue
+    ) AS provider_cost_plus_platform_revenue,
+    ROUND(
+        SUM(client_fee_amount)
+        - SUM(payment_system_fee_amount)
+        - SUM(platform_fee_amount),
+        2
+    ) AS rounding_difference
 FROM payments
 WHERE status = 'succeeded'
   AND is_deleted = FALSE;
