@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy landing to GitHub Pages
 
 on:
   push:
@@ -26,8 +26,8 @@ jobs:
       - name: Install, build, and upload site
         uses: withastro/action@v3
         with:
-          path: ./landing
-        # by default this action uses npm to install, build, and upload the site
+          path: ./landing        # путь к Astro-проекту внутри репозитория
+          node-version: 22       # Astro 7.x требует Node >=22.12.0
 
   deploy:
     needs: build
