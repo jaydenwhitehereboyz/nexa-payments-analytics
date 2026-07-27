@@ -75,4 +75,4 @@ LEFT JOIN main_payment_system mps
 
 ORDER BY cr.gross_revenue DESC
 
-LIMIT 20;
+LIMIT 20; 

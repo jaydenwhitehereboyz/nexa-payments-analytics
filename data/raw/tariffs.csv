@@ -1,5 +1,4 @@
-tariff_id,tariff_name,price,duration_days,is_active,created_at
-1,Starter,990.0,30,True,2022-01-01
-2,Business,2990.0,30,True,2022-01-01
-3,Professional,7990.0,30,True,2022-06-01
-4,Enterprise,19990.0,30,True,2023-01-01
+tariff_id,tariff_name,monthly_price,description,is_active
+1,Free,0.0,"No monthly fee, public-like processing rates, basic dashboard and standard support.",True
+2,Pro,20000.0,"Lower processing rates, advanced analytics, recurring payments and priority support.",True
+3,Enterprise,50000.0,"Best rates, payment routing, SLA, account management and custom integrations.",True

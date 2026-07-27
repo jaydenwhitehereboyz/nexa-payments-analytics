@@ -1,0 +1,9 @@
+payment_system_id,payment_system_name,provider_type,base_market_fee_rate,description,benefits,is_active
+1,alpha_bank,bank_acquiring,0.03,Synthetic universal-bank acquiring offer.,"Low acquiring cost, fast settlements, broad SME coverage and simple domestic card acceptance.",True
+2,tbank,bank_ecosystem,0.06,Synthetic premium bank ecosystem offer.,"High conversion, installments, tokenization, advanced merchant tools and a strong consumer ecosystem.",True
+3,cloudpayments,payment_gateway,0.032,Synthetic developer-focused gateway offer.,"Developer-friendly API, recurring payments, saved cards, flexible checkout and ecommerce tooling.",True
+4,yookassa,payment_gateway,0.029,Synthetic multi-method checkout offer.,"Many payment methods, marketplace support, familiar checkout, simple onboarding and domestic coverage.",True
+5,sberpay,bank_wallet,0.027,Synthetic bank-wallet and acquiring offer.,"Large retail user base, one-click bank payments, fast authorization and strong ecosystem conversion.",True
+6,stripe,international_gateway,0.039,Synthetic international gateway offer.,"International cards, multi-currency payments, subscriptions, developer tooling and cross-border expansion.",True
+7,paypal,international_wallet,0.045,Synthetic international wallet offer.,"Buyer trust, international wallet reach, dispute tooling and checkout without entering card details.",True
+8,sbp,bank_transfer,0.012,Synthetic fast bank-transfer rail offer.,"Very low commission, instant bank-to-bank payments, QR checkout and suitability for low-margin merchants.",True
