@@ -1,0 +1,585 @@
+---
+// src/pages/index.astro
+const tariffs = [
+  {
+    name: "Free",
+    price: "0 ₽",
+    desc: "Публичные тарифы провайдеров, базовый дашборд, стандартная поддержка",
+  },
+  {
+    name: "Pro",
+    price: "20 000 ₽/мес",
+    desc: "Сниженные ставки, расширенная аналитика, рекуррентные платежи, приоритетная поддержка",
+    highlight: true,
+  },
+  {
+    name: "Enterprise",
+    price: "50 000 ₽/мес",
+    desc: "Лучшие ставки, роутинг платежей, SLA, персональный менеджер, кастомные интеграции",
+  },
+];
+
+const dataset = [
+  { label: "Бизнес-аккаунты", value: "5 000" },
+  { label: "Платёжные системы", value: "8" },
+  { label: "Тарифы", value: "3" },
+  { label: "Платёжные попытки", value: "200 000" },
+  { label: "Период данных", value: "янв 2022 – июн 2026" },
+];
+
+const stack = ["PostgreSQL", "Python", "pandas", "NumPy", "SQL window functions", "Git / GitHub"];
+---
+
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NexaRoute — Payment Orchestration Analytics</title>
+    <meta
+      name="description"
+      content="NexaRoute — учебный аналитический проект: экономика платёжной оркестрации, тарифы, провайдеры и юнит-экономика транзакций."
+    />
+  </head>
+  <body>
+    <!-- NAV -->
+    <header class="nav">
+      <div class="nav-inner">
+        <span class="logo">Nexa<span class="logo-accent">Route</span></span>
+        <nav class="nav-links">
+          <a href="#how-it-works">Как это работает</a>
+          <a href="#economics">Экономика</a>
+          <a href="#pricing">Тарифы</a>
+          <a href="#dataset">Датасет</a>
+          <a
+            class="nav-cta"
+            href="https://github.com/jaydenwhitehereboyz/saas-revenue-retention-analytics"
+            target="_blank"
+            rel="noopener"
+            >GitHub →</a
+          >
+        </nav>
+      </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-inner">
+        <span class="eyebrow">учебный портфолио-проект</span>
+        <h1>Одна интеграция.<br />Все платёжные провайдеры.</h1>
+        <p class="hero-sub">
+          NexaRoute моделирует экономику B2B платёжной оркестрации: объёмы,
+          комиссии провайдеров, маржу платформы, тарифы и риск-надбавки —
+          на синтетическом, но реалистичном датасете.
+        </p>
+        <div class="hero-actions">
+          <a
+            class="btn-primary"
+            href="https://github.com/jaydenwhitehereboyz/saas-revenue-retention-analytics"
+            target="_blank"
+            rel="noopener">Смотреть на GitHub</a
+          >
+          <a class="btn-secondary" href="#how-it-works">Как это устроено ↓</a>
+        </div>
+      </div>
+      <div class="hero-glow"></div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section id="how-it-works" class="section">
+      <h2>Как это работает</h2>
+      <p class="section-sub">
+        Мерчант подключается один раз — и получает доступ к банкам, платёжным
+        шлюзам, кошелькам и переводным рельсам через единый API.
+      </p>
+      <div class="flow">
+        <div class="flow-node">Клиент</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">Мерчант</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node accent">NexaRoute</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node small">Банк</div>
+        <div class="flow-node small">Гейтвей</div>
+        <div class="flow-node small">Кошелёк</div>
+        <div class="flow-node small">Переводы</div>
+      </div>
+      <ul class="feature-grid">
+        <li>Единый API вместо десятка интеграций</li>
+        <li>Более низкие ставки за счёт агрегированного объёма</li>
+        <li>Роутинг платежей и резервные провайдеры</li>
+        <li>Единая отчётность и сверка</li>
+        <li>Аналитика платежей и рекомендации</li>
+        <li>Рекуррентные платежи и возвраты</li>
+      </ul>
+    </section>
+
+    <!-- ECONOMICS -->
+    <section id="economics" class="section alt">
+      <h2>Экономика одного платежа</h2>
+      <p class="section-sub">Пример: клиент платит 1 000 000 ₽</p>
+      <div class="econ-bar">
+        <div class="econ-segment provider" style="width: 86.2%">
+          <span>Провайдер получает<br /><strong>25 000 ₽</strong></span>
+        </div>
+        <div class="econ-segment platform" style="width: 13.8%">
+          <span>NexaRoute<br /><strong>4 000 ₽</strong></span>
+        </div>
+      </div>
+      <div class="econ-numbers">
+        <div>
+          <span class="num">2.9%</span>
+          <span class="label">ставка для клиента</span>
+        </div>
+        <div>
+          <span class="num">2.5%</span>
+          <span class="label">оптовая ставка провайдера</span>
+        </div>
+        <div>
+          <span class="num">0.4%</span>
+          <span class="label">маржа платформы</span>
+        </div>
+        <div>
+          <span class="num">971 000 ₽</span>
+          <span class="label">получает мерчант</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING -->
+    <section id="pricing" class="section">
+      <h2>Тарифы</h2>
+      <p class="section-sub">
+        Платные тарифы сочетают подписку с более выгодными ставками обработки.
+      </p>
+      <div class="pricing-grid">
+        {
+          tariffs.map((t) => (
+            <div class:list={["price-card", { highlight: t.highlight }]}>
+              {t.highlight && <span class="badge">популярный</span>}
+              <h3>{t.name}</h3>
+              <div class="price">{t.price}</div>
+              <p>{t.desc}</p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- DATASET -->
+    <section id="dataset" class="section alt">
+      <h2>Датасет и стек</h2>
+      <div class="dataset-grid">
+        {
+          dataset.map((d) => (
+            <div class="dataset-card">
+              <div class="dataset-value">{d.value}</div>
+              <div class="dataset-label">{d.label}</div>
+            </div>
+          ))
+        }
+      </div>
+      <div class="stack-row">
+        {stack.map((s) => <span class="chip">{s}</span>)}
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+      <h2>Хочешь посмотреть SQL и код генерации данных?</h2>
+      <p>Полный разбор бизнес-модели, KPI-запросы и кейсы — в репозитории.</p>
+      <a
+        class="btn-primary"
+        href="https://github.com/jaydenwhitehereboyz/saas-revenue-retention-analytics"
+        target="_blank"
+        rel="noopener">Открыть репозиторий →</a
+      >
+    </section>
+
+    <footer class="footer">
+      <p>NexaRoute — учебный аналитический проект. Все компании и данные синтетические.</p>
+    </footer>
+  </body>
+</html>
+
+<style>
+  :root {
+    --bg: #0b0e14;
+    --bg-alt: #10141d;
+    --card: #151a24;
+    --border: #232936;
+    --text: #e6e9ef;
+    --text-dim: #9aa4b2;
+    --accent: #6ee7b7;
+    --accent-2: #60a5fa;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+    scroll-behavior: smooth;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  h1, h2, h3 {
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  /* NAV */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(10px);
+    background: rgba(11, 14, 20, 0.8);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    font-weight: 700;
+    font-size: 18px;
+  }
+  .logo-accent {
+    color: var(--accent);
+  }
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    align-items: center;
+    font-size: 14px;
+    color: var(--text-dim);
+  }
+  .nav-links a:hover {
+    color: var(--text);
+  }
+  .nav-cta {
+    color: var(--accent) !important;
+    font-weight: 500;
+  }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 120px 24px 90px;
+    text-align: center;
+    overflow: hidden;
+  }
+  .hero-glow {
+    position: absolute;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(110, 231, 183, 0.15), transparent 70%);
+    z-index: -1;
+  }
+  .eyebrow {
+    display: inline-block;
+    font-size: 13px;
+    color: var(--accent);
+    border: 1px solid var(--border);
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin-bottom: 20px;
+    letter-spacing: 0.02em;
+  }
+  .hero h1 {
+    font-size: 48px;
+    line-height: 1.15;
+    margin: 0 0 20px;
+  }
+  .hero-sub {
+    color: var(--text-dim);
+    font-size: 17px;
+    max-width: 620px;
+    margin: 0 auto 36px;
+    line-height: 1.6;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #0b0e14;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .btn-secondary {
+    border: 1px solid var(--border);
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--text-dim);
+  }
+  .btn-secondary:hover {
+    color: var(--text);
+    border-color: var(--accent-2);
+  }
+
+  /* SECTIONS */
+  .section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 80px 24px;
+  }
+  .section.alt {
+    background: var(--bg-alt);
+    max-width: none;
+    padding: 80px 24px;
+  }
+  .section.alt > * {
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .section h2 {
+    font-size: 30px;
+    margin: 0 0 10px;
+    text-align: center;
+  }
+  .section-sub {
+    color: var(--text-dim);
+    text-align: center;
+    max-width: 560px;
+    margin: 0 auto 48px;
+    line-height: 1.6;
+  }
+
+  /* FLOW */
+  .flow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 48px;
+  }
+  .flow-node {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+  .flow-node.accent {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .flow-node.small {
+    font-size: 13px;
+    color: var(--text-dim);
+    padding: 8px 14px;
+  }
+  .flow-arrow {
+    color: var(--text-dim);
+  }
+
+  .feature-grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .feature-grid li {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    font-size: 14px;
+    color: var(--text-dim);
+  }
+
+  /* ECONOMICS */
+  .econ-bar {
+    display: flex;
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto 40px;
+    height: 90px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .econ-segment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 13px;
+  }
+  .econ-segment.provider {
+    background: #1c2434;
+    color: var(--text-dim);
+  }
+  .econ-segment.platform {
+    background: var(--accent);
+    color: #0b0e14;
+    font-weight: 600;
+  }
+  .econ-numbers {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 40px;
+    text-align: center;
+  }
+  .econ-numbers .num {
+    display: block;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--accent-2);
+  }
+  .econ-numbers .label {
+    display: block;
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  /* PRICING */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+  }
+  .price-card {
+    position: relative;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    text-align: center;
+  }
+  .price-card.highlight {
+    border-color: var(--accent);
+  }
+  .badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: #0b0e14;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 999px;
+  }
+  .price-card h3 {
+    margin: 4px 0 8px;
+    font-size: 20px;
+  }
+  .price {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--accent-2);
+    margin-bottom: 14px;
+  }
+  .price-card p {
+    color: var(--text-dim);
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* DATASET */
+  .dataset-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .dataset-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+  }
+  .dataset-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .dataset-label {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+  .stack-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+  .chip {
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 13px;
+    padding: 6px 14px;
+    border-radius: 999px;
+  }
+
+  /* CTA */
+  .cta {
+    text-align: center;
+    padding: 100px 24px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .cta h2 {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+  .cta p {
+    color: var(--text-dim);
+    margin-bottom: 28px;
+  }
+
+  .footer {
+    text-align: center;
+    padding: 30px 24px 50px;
+    color: var(--text-dim);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 640px) {
+    .hero h1 {
+      font-size: 34px;
+    }
+    .nav-links {
+      display: none;
+    }
+  }
+</style>
