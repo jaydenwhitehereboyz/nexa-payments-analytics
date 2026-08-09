@@ -1,9 +1,9 @@
 # NexaRoute — Payment Orchestration Analytics
 > A portfolio analytics project that models the economics of a fictional B2B payment orchestration platform.
 
-[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-View_Landing_Page-1F3FBF?style=for-the-badge&labelColor=12151B)](https://jaydenwhitehereboyz.github.io/saas-revenue-retention-analytics/)
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-View_Landing_Page-1F3FBF?style=for-the-badge&labelColor=12151B)](https://jaydenwhitehereboyz.github.io/nexa-payments-analytics/)
 
-[![Превью лендинга](./landing/assets/nexa_route.png)](https://jaydenwhitehereboyz.github.io/saas-revenue-retention-analytics/)
+[![Превью лендинга](./landing/assets/nexa_route.png)](https://jaydenwhitehereboyz.github.io/nexa-payments-analytics/)
 
 
 
