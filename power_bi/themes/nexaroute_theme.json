@@ -1,0 +1,23 @@
+{
+  "name": "NexaRoute Portfolio",
+  "dataColors": [
+    "#4C72B0",
+    "#DD8452",
+    "#55A868",
+    "#C44E52",
+    "#8172B3",
+    "#937860",
+    "#64B5CD",
+    "#CCB974"
+  ],
+  "background": "#FFFFFF",
+  "foreground": "#1B1F2A",
+  "tableAccent": "#4C72B0",
+  "good": "#1F9D55",
+  "bad": "#D64545",
+  "neutral": "#DD8452",
+  "maximum": "#4C72B0",
+  "center": "#CCB974",
+  "minimum": "#F4F5F7",
+  "null": "#6B7280"
+}
